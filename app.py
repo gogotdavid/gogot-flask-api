@@ -10,19 +10,28 @@ def login():
     user_id = data.get("id")
     pw = data.get("pw")
 
-    conn = pymysql.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASS"),
-        db=os.getenv("DB_NAME"),
-        charset="utf8",
-        port=int(os.getenv("DB_PORT", "3306"))
-    )
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id=%s AND password=%s", (user_id, pw))
-    result = cursor.fetchone()
-    conn.close()
+    try:
+        conn = pymysql.connect(
+            host="117.52.84.19",
+            user="david",
+            password="Rlawhdgjs1!",
+            database="mydatabase",
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE id=%s AND password=%s", (user_id, pw))
+        result = cursor.fetchone()
+        conn.close()
 
-    if result:
-        return jsonify({"success": True, "token": "test-token"})
-    return jsonify({"success": False})
+        if result:
+            return jsonify({"success": True, "token": "test-token"})
+        else:
+            return jsonify({"success": False, "message": "ID 또는 PW가 틀렸습니다."})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"DB 오류: {str(e)}"})
+
+# 🚨 포트 지정 (Render용)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
