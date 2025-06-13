@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: gogot-login-api
+    env: python
+    buildCommand: ""
+    startCommand: "python app.py"
+    envVars:
+      - key: DB_HOST
+        value: your-mysql-host.com
+      - key: DB_USER
+        value: your-user
+      - key: DB_PASS
+        value: your-password
+      - key: DB_NAME
+        value: your-db
+      - key: DB_PORT
+        value: "3306"
