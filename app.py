@@ -7,8 +7,8 @@ app = Flask(__name__)
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.json
-    user_id = data.get("id")
-    pw = data.get("pw")
+    username = data.get("username")
+    password = data.get("password")
 
     try:
         conn = pymysql.connect(
@@ -20,7 +20,7 @@ def login():
             cursorclass=pymysql.cursors.DictCursor
         )
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s", (user_id, pw))
+        cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s", (username, password))
         result = cursor.fetchone()
         conn.close()
 
