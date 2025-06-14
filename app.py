@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import pymysql
 import jwt
 import os
+import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -95,6 +96,37 @@ def check_token():
         return jsonify({"valid": False, "reason": "토큰 만료"})
     except jwt.InvalidTokenError:
         return jsonify({"valid": False, "reason": "유효하지 않은 토큰"})
+
+# ✅ 네이버 쇼핑 프록시 API
+from flask_cors import CORS
+CORS(app)  # CORS 허용 (모든 오리진에서 호출 가능)
+
+@app.route("/api/naver-shop", methods=["POST"])
+def naver_shop():
+    data = request.json
+    keyword = data.get("keyword", "")
+    client_id = data.get("client_id", "")
+    client_secret = data.get("client_secret", "")
+    if not keyword or not client_id or not client_secret:
+        return jsonify({"error": "필수 정보 누락"}), 400
+
+    api_url = "https://openapi.naver.com/v1/search/shop.json"
+    headers = {
+        "X-Naver-Client-Id": client_id,
+        "X-Naver-Client-Secret": client_secret
+    }
+    params = {
+        "query": keyword,
+        "display": 100,
+        "start": 1,
+        "sort": "sim"
+    }
+    try:
+        res = requests.get(api_url, headers=headers, params=params, timeout=10)
+        res.raise_for_status()
+        return jsonify(res.json())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ✅ Render에서 포트 지정
 if __name__ == "__main__":
