@@ -20,7 +20,7 @@ def login():
             cursorclass=pymysql.cursors.DictCursor
         )
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE id=%s AND password=%s", (user_id, pw))
+        cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s", (user_id, pw))
         result = cursor.fetchone()
         conn.close()
 
