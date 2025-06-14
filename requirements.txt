@@ -3,3 +3,4 @@ pymysql
 bcrypt
 pyjwt
 python-dotenv
+flask-cors
